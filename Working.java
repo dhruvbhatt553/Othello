@@ -1,0 +1,587 @@
+import java.awt.Color;
+import java.awt.Image;
+
+import java.awt.event.*;
+import java.util.*;
+
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class Working {
+    int boardState[][];
+    GameBoard gb;
+    int flag = 0;
+    int px, py;
+    Border br;
+    Platform aboutGame;
+    ScoreBoard pb, pw;
+    GameLogs gameLogs;
+    int tpo, maxp = 1;
+    Vector vec;
+    Point p1, maxme;
+    int whitePieces, blackPieces;
+
+    Working(GameBoard gb) {
+        maxme = new Point(0, 0);
+        boardState = new int[gb.size][gb.size];
+        vec = new Vector<>();
+        aboutGame = new Platform();
+        whitePieces = 30;
+        blackPieces = 30;
+        // pb = new ScoreBoard(0);
+        // pw = new ScoreBoard(1);
+        
+
+        // pb.setLocation(gb.getWidth(), 0);
+        // pw.setLocation(gb.getWidth(), gb.getHeight() / 2);
+        aboutGame.setLocation(gb.getWidth(), 0);
+        // pw.setLocation(gb.getWidth(), gb.getHeight() / 2);
+
+        pb = aboutGame.blackScoreBoard;
+        pw = aboutGame.whiteScoreBoard;
+        gameLogs  = aboutGame.gameLogs;
+
+        br = new LineBorder(Color.gray, 5, true);
+        for (int i = 0; i < gb.size; i++) {
+            for (int j = 0; j < gb.size; j++) {
+                boardState[i][j] = 3;
+            }
+        }
+
+        boardState[gb.size / 2][gb.size / 2] = 0;
+        boardState[gb.size / 2 - 1][gb.size / 2 - 1] = 0;
+        boardState[gb.size / 2][gb.size / 2 - 1] = 1;
+        boardState[gb.size / 2 - 1][gb.size / 2] = 1;
+
+        boardState[gb.size / 2 - 2][gb.size / 2 - 2] = 2;
+        boardState[gb.size / 2 - 1][gb.size / 2 - 2] = 2;
+        boardState[gb.size / 2 - 2][gb.size / 2 - 1] = 2;
+        boardState[gb.size / 2][gb.size / 2 - 2] = 2;
+        boardState[gb.size / 2 - 2][gb.size / 2] = 2;
+
+        boardState[gb.size / 2 + 1][gb.size / 2 + 1] = 2;
+        boardState[gb.size / 2 + 1][gb.size / 2] = 2;
+        boardState[gb.size / 2][gb.size / 2 + 1] = 2;
+        boardState[gb.size / 2 - 1][gb.size / 2 + 1] = 2;
+        boardState[gb.size / 2 + 1][gb.size / 2 - 1] = 2;
+
+        boardState[gb.size / 2 - 2][gb.size / 2 + 1] = 2;
+        boardState[gb.size / 2 + 1][gb.size / 2 - 2] = 2;
+
+        this.gb = gb;
+
+        // left-top
+        addml(gb.allbuttons[gb.size / 2 - 2][gb.size / 2 - 2]);
+        addml(gb.allbuttons[gb.size / 2 - 1][gb.size / 2 - 2]);
+        addml(gb.allbuttons[gb.size / 2 - 2][gb.size / 2 - 1]);
+        addml(gb.allbuttons[gb.size / 2][gb.size / 2 - 2]);
+        addml(gb.allbuttons[gb.size / 2 - 2][gb.size / 2]);
+
+        // top-right and bottom-left corners
+        addml(gb.allbuttons[gb.size / 2 - 2][gb.size / 2 + 1]);
+        addml(gb.allbuttons[gb.size / 2 + 1][gb.size / 2 - 2]);
+
+        // right-bottom
+        addml(gb.allbuttons[gb.size / 2 + 1][gb.size / 2 - 1]);
+        addml(gb.allbuttons[gb.size / 2 - 1][gb.size / 2 + 1]);
+        addml(gb.allbuttons[gb.size / 2][gb.size / 2 + 1]);
+        addml(gb.allbuttons[gb.size / 2 + 1][gb.size / 2]);
+        addml(gb.allbuttons[gb.size / 2 + 1][gb.size / 2 + 1]);
+
+    }
+
+    // ADDING MS
+    void addml(JButton jb) {
+        jb.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                // System.out.println("1");
+                // temp();
+                removeBorders();
+                checkFeasibility(jb);
+                // System.out.println("10");
+                // temp();
+                giveBorders();
+            }
+
+        });
+    }
+
+    void display() {
+        for (int i = 0; i < gb.size; i++) {
+            for (int j = 0; j < gb.size; j++) {
+                System.out.print("     " + boardState[i][j]);
+            }
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
+    }
+
+    void takeTurn(JButton bu1) {
+        // System.out.println("over here!!!" + flag + flag + flag);
+        // display();
+
+        px = Integer.parseInt("" + bu1.getText().substring(0, 2));
+        py = Integer.parseInt("" + bu1.getText().substring(2));
+
+        if (boardState[px][py] == 2) {// System.out.println("here");
+
+            // if (profit(px, py, flag, boardState, 0) >= 1) {
+            if (vec.size() >= 1) {
+                gb.allbuttons[px][py].setIcon(new ImageIcon(new ImageIcon("../public/img" + flag + ".jpg").getImage()
+                        .getScaledInstance(GameBoard.d1.width / gb.size, GameBoard.d1.width / gb.size,
+                                Image.SCALE_SMOOTH)));
+                gb.allbuttons[px][py].setToolTipText(null);
+
+                boardState[px][py] = flag;
+                // tpo = profit(px, py, flag, boardState, 1);
+                tpo = vec.size();
+                setImages();
+                // checking(px, py, flag);
+
+                gameLogs.append(""+(flag == 0 ? "Black" : "White")+" On ["+(px+1)+"]["+(py+1)+"]");
+
+                if (flag == 1) {
+                    pw.updateBy(tpo + 1);
+                    pb.updateBy(-tpo);
+                } else {
+                    pb.updateBy(tpo + 1);
+                    pw.updateBy(-tpo);
+                }
+                setFlags(px, py);
+                flag = 1 - flag;
+                gb.th.running(2, 150);
+                if (flag == 1 && gb.pla == 1) {
+                    System.out.println("Machine Thinks");
+                    think();
+                }
+
+                if (gb.pla == 1 && flag == 1) {
+                    if (maxme.getX() != -1) {
+                        System.out.println("here");
+                        takeTurn(gb.allbuttons[maxme.getX()][maxme.getY()]);
+                    } else {
+                        flag = 1 - flag;
+                    }
+                }
+            } else {
+                flag = 1 - flag;
+            }
+            // System.out.print("printing : "+pb.po+" "+pw.po);
+
+            if (pb.po + pw.po == gb.size * gb.size) {
+                System.out.print("reached");
+                System.out.print("printing : " + pb.po + "  " + pw.po);
+                if (pb.po > pw.po) {
+                    System.out.print("OH1 !");
+
+                    if (gb.pla == 1) {
+                        pw.jl.setIcon(new ImageIcon(new ImageIcon("../public/iwin.jpeg").getImage()
+                                .getScaledInstance(pb.jl.getWidth(), pb.jl.getHeight(),
+                                        Image.SCALE_SMOOTH)));
+                        
+                    }
+
+                } else if (pb.po < pw.po) {
+                    // gb.th.running(1,100);
+                    System.out.print("OH !");
+
+                    if (gb.pla == 1) {
+                        System.out.print("OH !");
+
+                        pb.jl.setIcon(new ImageIcon(new ImageIcon("../public/1win.jpg").getImage()
+                                .getScaledInstance(pb.jl.getWidth(), pb.jl.getHeight(),
+                                        Image.SCALE_SMOOTH)));
+                        
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    // SET FLAGS
+
+    void setFlags(int x, int y) {
+        if (x + 1 <= gb.size - 1 && boardState[x + 1][y] == 3) {
+            boardState[x + 1][y] = 2;
+            addml(gb.allbuttons[x + 1][y]);
+        }
+        if (y + 1 <= gb.size - 1 && boardState[x][y + 1] == 3) {
+            boardState[x][y + 1] = 2;
+            addml(gb.allbuttons[x][y + 1]);
+        }
+        if (x + 1 <= gb.size - 1 && y + 1 <= gb.size - 1 && boardState[x + 1][y + 1] == 3) {
+            boardState[x + 1][y + 1] = 2;
+            addml(gb.allbuttons[x + 1][y + 1]);
+        }
+        if (x - 1 >= 0 && boardState[x - 1][y] == 3) {
+            boardState[x - 1][y] = 2;
+            addml(gb.allbuttons[x - 1][y]);
+        }
+        if (y - 1 >= 0 && boardState[x][y - 1] == 3) {
+            boardState[x][y - 1] = 2;
+            addml(gb.allbuttons[x][y - 1]);
+        }
+        if (x - 1 >= 0 && y - 1 >= 0 && boardState[x - 1][y - 1] == 3) {
+            boardState[x - 1][y - 1] = 2;
+            addml(gb.allbuttons[x - 1][y - 1]);
+        }
+        if (x + 1 <= gb.size - 1 && y - 1 >= 0 && boardState[x + 1][y - 1] == 3) {
+            boardState[x + 1][y - 1] = 2;
+            addml(gb.allbuttons[x + 1][y - 1]);
+        }
+        if (x - 1 >= 0 && y + 1 <= gb.size - 1 && boardState[x - 1][y + 1] == 3) {
+            boardState[x - 1][y + 1] = 2;
+            addml(gb.allbuttons[x - 1][y + 1]);
+        }
+        // display();
+    }
+
+    private void setImages() {
+        for (int i = 0; i < vec.size(); i++) {
+            p1 = (Point) vec.get(i);
+            gb.allbuttons[p1.getX()][p1.getY()]
+                    .setIcon(new ImageIcon(new ImageIcon("../public/img" + flag + ".jpg").getImage()
+                            .getScaledInstance(GameBoard.d1.width / gb.size, GameBoard.d1.width / gb.size,
+                                    Image.SCALE_SMOOTH)));
+            boardState[p1.getX()][p1.getY()] = flag;
+        }
+        removeBorders();
+    }
+
+    // PROFIT SHOW
+
+    public int profit(int x, int y, int app, int boardState[][]) {
+        int def = 1 - app;
+        int i, j, tefl, tpo = 0;
+
+        // "\"
+
+        tefl = 0;
+
+        i = x - 1;
+        j = y - 1;
+        while (i != -1 && j != -1) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+                i--;
+                j--;
+            }
+
+        }
+        i = x - 1;
+        j = y - 1;
+
+        if (tefl == 1) {
+            while (i != -1 && j != -1 && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+                tpo++;
+                i--;
+                j--;
+
+            }
+        }
+        // "/"
+
+        tefl = 0;
+
+        i = x + 1;
+        j = y - 1;
+        while (i != gb.size && j != -1) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+                i++;
+                j--;
+            }
+
+        }
+        i = x + 1;
+        j = y - 1;
+
+        if (tefl == 1) {
+            while (i != gb.size && j != -1 && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+                // if (ch == 1) {
+                // gb.allbuttons[i][j].setIcon(new ImageIcon(new ImageIcon("../public/img" + app
+                // + ".jpg").getImage()
+                // .getScaledInstance(GameBoard.d1.width / gb.size, GameBoard.d1.width /
+                // gb.size,
+                // Image.SCALE_SMOOTH)));
+                // boardState[i][j] = app;
+                // }
+
+                tpo++;
+                i++;
+                j--;
+
+            }
+        }
+
+        // "//"
+        tefl = 0;
+
+        i = x - 1;
+        j = y + 1;
+        while (i != -1 && j != gb.size) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+                i--;
+                j++;
+            }
+
+        }
+        i = x - 1;
+        j = y + 1;
+
+        if (tefl == 1) {
+            while (i != -1 && j != gb.size && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                i--;
+                j++;
+
+            }
+        }
+
+        // "\\"
+        tefl = 0;
+
+        i = x + 1;
+        j = y + 1;
+        while (i != gb.size && j != gb.size) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+                i++;
+                j++;
+            }
+
+        }
+        i = x + 1;
+        j = y + 1;
+
+        if (tefl == 1) {
+            while (i != gb.size && j != gb.size && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                i++;
+                j++;
+
+            }
+        }
+
+        // "<-"
+
+        tefl = 0;
+
+        i = x - 1;
+        j = y;
+        while (i != -1) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+
+                i--;
+            }
+
+        }
+        i = x - 1;
+
+        if (tefl == 1) {
+            while (i != -1 && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                i--;
+
+            }
+        }
+
+        // "->"
+
+        tefl = 0;
+
+        i = x + 1;
+        j = y;
+        while (i != gb.size) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+
+                i++;
+            }
+
+        }
+        i = x + 1;
+
+        if (tefl == 1) {
+            while (i != gb.size && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                i++;
+
+            }
+        }
+
+        // "^"
+
+        tefl = 0;
+
+        j = y - 1;
+        i = x;
+        while (j != -1) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+
+                j--;
+            }
+
+        }
+        j = y - 1;
+
+        if (tefl == 1) {
+            while (j != -1 && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                j--;
+
+            }
+        }
+
+        // "down"
+
+        tefl = 0;
+
+        j = y + 1;
+        i = x;
+        while (j != gb.size) {
+            if (boardState[i][j] == app) {
+                tefl = 1;
+                break;
+            } else if (boardState[i][j] > 1) {
+                break;
+            } else {
+
+                j++;
+            }
+
+        }
+        j = y + 1;
+
+        if (tefl == 1) {
+            while (j != gb.size && boardState[i][j] == def) {
+                vec.addElement(new Point(i, j));
+
+                tpo++;
+                j++;
+            }
+        }
+
+        return tpo;
+        // if (tpo > maxp) {
+        // maxp = tpo;
+        // maxme.x = x;
+        // maxme.y = y;
+
+        // }
+    }
+
+    void giveBorders() {
+        for (int i = 0; i < vec.size(); i++) {
+            p1 = (Point) vec.get(i);
+
+            gb.allbuttons[p1.getX()][p1.getY()].setBorder(br);
+        }
+
+    }
+
+    void removeBorders() {
+
+        for (int i = 0; i < vec.size(); i++) {
+            p1 = (Point) vec.get(i);
+            gb.allbuttons[p1.getX()][p1.getY()].setBorder(null);
+        }
+        vec.clear();
+    }
+
+    void temp() {
+        for (int i = 0; i < vec.size(); i++) {
+            //System.out.println("" + ((Point) vec.get(i)).getX() + "  " + ((Point) vec.get(i)).getY());
+        }
+    }
+
+    void checkFeasibility(JButton jb) {
+        int h = Integer.parseInt("" + jb.getText().substring(0, 2));
+        int v = Integer.parseInt("" + jb.getText().substring(2));
+
+        if (boardState[h][v] == 2) {
+            int tpo = profit(h, v, flag, boardState);
+            if (tpo >= 1) {
+                gb.allbuttons[h][v].setToolTipText("POINTS UP BY : " + (tpo + 1));
+                return;
+            }
+        }
+        gb.allbuttons[h][v].setToolTipText("Inactive");
+    }
+
+    void think() {
+        int x1 = 0, y1 = 0;
+        int maxp = -1, t = 0;
+        maxme.setX(-1);
+        maxme.setY(-1);
+
+        for (int i = 0; i < gb.size; i++) {
+            for (int j = 0; j < gb.size; j++) {
+                if (boardState[i][j] == 2)
+                    t = profit(i, j, 1, boardState);
+                if (t > maxp) {
+                    maxp = t;
+                    x1 = i;
+                    y1 = j;
+                }
+            }
+        }
+
+        if (maxp >= 1)
+            maxme = new Point(x1, y1);
+
+    }
+
+
+
+    void validateMove(int flag) {
+
+    }
+
+}
