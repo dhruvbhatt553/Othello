@@ -1,6 +1,7 @@
 # Othello Game
 
-![image](https://github.com/user-attachments/assets/1a01d2ad-5163-4724-a860-a217297d76c1)
+![image](https://github.com/user-attachments/assets/a1918ccb-1842-4d48-b2e7-9b87d98e5368)
+
 
 
 ## Table of Contents
