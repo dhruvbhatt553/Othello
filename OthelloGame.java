@@ -93,7 +93,6 @@ class OthelloGame extends JFrame implements ActionListener {
     void temp() {
         add(sp);
         add(dp);
-
     }
 
     @Override
@@ -103,7 +102,6 @@ class OthelloGame extends JFrame implements ActionListener {
             new GameBoard(8, 1);
         } else {
             new GameBoard(8, 0);
-
         }
         dispose();
     }

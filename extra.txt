@@ -874,3 +874,22 @@ public class Working {
     }
 
 }
+
+ // Example usage
+    // public static void main(String[] args) {
+    //     // Example board (partial setup)
+    //     int[][] board = {
+    //         { 1, -1,  1,  0,  0,  0,  0,  0},
+    //         { 0,  1, -1,  0,  0,  0,  0,  0},
+    //         { 0,  0,  1, -1,  0,  0,  0,  0},
+    //         { 0,  0,  0,  1, -1,  0,  0,  0},
+    //         { 0,  0,  0,  0,  1, -1,  0,  0},
+    //         { 0,  0,  0,  0,  0,  1, -1,  0},
+    //         { 0,  0,  0,  0,  0,  0,  1, -1},
+    //         { 0,  0,  0,  0,  0,  0,  0,  1}
+    //     };
+
+    //     int player = 1;  // Assume 1 is the player
+    //     int evaluationScore = evaluateBoard(board, player);
+    //     System.out.println("Board evaluation score: " + evaluationScore);
+    // }

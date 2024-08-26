@@ -1,34 +1,27 @@
 import javax.swing.*;
-import java.awt.event.*;
 
-public class GameLogs extends JPanel  {
+public class GameLogs extends JPanel {
     JLabel l1, l2;
     private JTextArea area;
-    
 
     GameLogs() {
         setLayout(null);
 
-        l1 = new JLabel();
-        l1.setBounds(50, 25, 100, 30);
-        l2 = new JLabel();
-        l2.setBounds(160, 25, 100, 30);
         area = new JTextArea();
         area.setBounds(20, 75, 250, 200);
-       
-       
 
-        // add(l1);
-        // add(l2);
-        add(area);
-        
+        area.setLineWrap(true);
+
+        area.setWrapStyleWord(true);
+        area.setEditable(false);
+
+        JScrollPane scrollPane = new JScrollPane(area);
+        scrollPane.setBounds(20, 75, 250, 200);
+        add(scrollPane);
     }
 
-    void append(String newLine){
-        area.append("\n-->"+newLine);
+    void append(String newLine) {
+        area.append("\n-->" + newLine);
     }
 
-    
-
-   
 }

@@ -21,15 +21,13 @@ public class GameBoard extends JFrame implements ActionListener {
         d1.width = d1.height;
         setResizable(false);
         setSize(d1);
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                // w.pb.dispose();
-                // w.pw.dispose();
-                w.aboutGame.dispose();
-                new OthelloGame();
-            }
-
-        });
+        // this.addWindowListener(new java.awt.event.WindowAdapter() {
+        //     public void windowClosing(java.awt.event.WindowEvent e) {
+        //         // w.pb.dispose();
+        //         // w.pw.dispose();
+        //        newGame();
+        //     }
+        // });
 
         allbuttons = new JButton[size][size];
         tbutton = size * size;
@@ -72,9 +70,17 @@ public class GameBoard extends JFrame implements ActionListener {
 
     }
 
+    // void newGame(){
+    //     System.out.println("NG GameBoard");
+    //     w.aboutGame.dispose();
+    //     new OthelloGame();
+    // }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        w.takeTurn((JButton) e.getSource());
+        if(w.flag!=-1){
+            w.controlTurns(w.flag,(JButton) e.getSource());
+        }
     }
 
     public static void main(String[] args) {

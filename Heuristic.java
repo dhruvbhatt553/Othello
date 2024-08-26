@@ -1,6 +1,4 @@
 public class Heuristic {
-
-    // Define the score grid as a 2D array
     private static final int[][] SCORE_GRID = {
         {100, -20, 10, 5, 5, 10, -20, 100},
         {-20, -50, -2, -2, -2, -2, -50, -20},
@@ -36,28 +34,4 @@ public class Heuristic {
         
         return score;
     }
-
-    // Helper method to determine the opponent
-    private static int opponent(int player) {
-        return -player;
-    }
-
-    // Example usage
-    // public static void main(String[] args) {
-    //     // Example board (partial setup)
-    //     int[][] board = {
-    //         { 1, -1,  1,  0,  0,  0,  0,  0},
-    //         { 0,  1, -1,  0,  0,  0,  0,  0},
-    //         { 0,  0,  1, -1,  0,  0,  0,  0},
-    //         { 0,  0,  0,  1, -1,  0,  0,  0},
-    //         { 0,  0,  0,  0,  1, -1,  0,  0},
-    //         { 0,  0,  0,  0,  0,  1, -1,  0},
-    //         { 0,  0,  0,  0,  0,  0,  1, -1},
-    //         { 0,  0,  0,  0,  0,  0,  0,  1}
-    //     };
-
-    //     int player = 1;  // Assume 1 is the player
-    //     int evaluationScore = evaluateBoard(board, player);
-    //     System.out.println("Board evaluation score: " + evaluationScore);
-    // }
 }
